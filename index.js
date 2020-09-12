@@ -34,8 +34,11 @@ Git.prototype.list = function (cb) {
 };
 
 Git.prototype.exists = function (repo, cb) {
+    var noExist = function(_,cb){
+        throw "Custom fs implementation missing .exists"
+    }
     var exists = this.fs ?
-        this.fs.exists :
+        (this.fs.exists || noExist):
         (fs.exists || path.exists)
     exists(this.dirMap(repo), cb);
 };
