@@ -24,16 +24,20 @@ function Git (dirMap, opts) {
     this.dirMap = dirMap;
     this.autoCreate = opts.autoCreate === false ? false : true;
     this.checkout = opts.checkout;
+    this.fs = opts.fs;
 }
 
 inherits(Git, EventEmitter);
 
 Git.prototype.list = function (cb) {
-    fs.readdir(this.dirMap(), cb);
+    (this.fs || fs).readdir(this.dirMap(), cb);
 };
 
 Git.prototype.exists = function (repo, cb) {
-    (fs.exists || path.exists)(this.dirMap(repo), cb);
+    var exists = this.fs ?
+        this.fs.exists :
+        (fs.exists || path.exists)
+    exists(this.dirMap(repo), cb);
 };
 
 Git.prototype.mkdir = function (dir, cb) {
